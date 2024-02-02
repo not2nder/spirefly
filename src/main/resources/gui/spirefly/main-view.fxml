@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: black;" stylesheets="@../../assets/styles/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.spirefly.MainController">
+   <bottom>
+      <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="130.0" prefWidth="600.0" styleClass="bottomPane" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane alignment="CENTER" prefHeight="58.0" prefWidth="539.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1">
+                     <children>
+                        <Button fx:id="btPrevious" alignment="CENTER" contentDisplay="CENTER" layoutX="114.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#previous" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia" textAlignment="CENTER" />
+                        <Button fx:id="btPlay" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="40.0" styleClass="buttonMedia" textAlignment="CENTER" />
+                        <Button fx:id="btNext" alignment="CENTER" contentDisplay="CENTER" layoutX="166.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#next" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2">
+                     <children>
+                        <Button fx:id="btMute" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#mute" prefHeight="30.0" prefWidth="30.0" styleClass="secondaryButton" textAlignment="CENTER" />
+                        <Slider fx:id="slVolume" focusTraversable="false" prefHeight="14.0" prefWidth="67.0" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="5.0" right="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </GridPane>
+            <Label fx:id="lbSongTitle" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="54.0" prefWidth="413.0" styleClass="songTitle" textAlignment="CENTER">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Slider fx:id="slProgress" focusTraversable="false" nodeOrientation="LEFT_TO_RIGHT" onMousePressed="#slideTo" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></Slider>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="30.0" right="30.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </VBox>
+   </bottom>
+   <center>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="background" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="imvCover" fitHeight="235.0" fitWidth="224.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../assets/icons/undefined.png" />
+               </image>
+               <effect>
+                  <DropShadow height="88.84" radius="46.260000000000005" width="98.2">
+                     <color>
+                        <Color opacity="0.7332826852798462" />
+                     </color>
+                  </DropShadow>
+               </effect>
+            </ImageView>
+         </children>
+      </HBox>
+   </center>
+   <left>
+      <ScrollPane fx:id="spMusicPane" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" maxWidth="-Infinity" prefWidth="200.0" style="-fx-background-color: black;" styleClass="panel">
+         <content>
+            <VBox fx:id="vbSongs" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="186.0" spacing="5.0" style="-fx-background-color: black;" styleClass="panel">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+         </content>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
+      </ScrollPane>
+   </left>
+</BorderPane>
