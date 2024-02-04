@@ -1,5 +1,9 @@
 package filemanager;
 
+import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -7,26 +11,11 @@ import java.util.Collections;
 import java.util.Objects;
 
 public class FileManager {
-    public void createDirectory(String path) {
-        File directory = new File(path);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-    }
+    public Object choose() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose File");
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
 
-    public ArrayList<File> listFiles(File path){
-
-        ArrayList<File> list = new ArrayList<>();
-
-        FilenameFilter audioFilter = (dir,name) -> {
-            for (String ext: new String[]{"mp3", "wav","ogg"}) {
-                if (name.toLowerCase().endsWith("."+ext)){
-                    return true;
-                }
-            }
-            return false;
-        };
-        Collections.addAll(list, Objects.requireNonNull(path.listFiles()));
-        return list;
+        return selectedFile;
     }
 }

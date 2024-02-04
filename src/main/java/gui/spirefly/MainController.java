@@ -1,5 +1,6 @@
 package gui.spirefly;
 
+import connection.SQLConnection;
 import filemanager.FileManager;
 
 import de.jensd.fx.glyphs.GlyphsDude;
@@ -18,14 +19,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainController {
     @FXML
@@ -37,6 +35,8 @@ public class MainController {
     @FXML
     private Button btPlay;
     @FXML
+    private ImageView imvLoopBt;
+    @FXML
     private Button btMute;
     @FXML
     private ImageView imvCover;
@@ -46,47 +46,36 @@ public class MainController {
     private Label lbImgTitle;
     private ArrayList<File> songs;
     private boolean isPLayin;
+    private boolean isLooped = false;
     private Media media;
     private MediaPlayer mediaPlayer;
     private int songNumber;
+    private SQLConnection conn;
+    private FileManager manager;
 
     @FXML
     public void initialize() {
 
-        FileManager manager = new FileManager();
-        songs = manager.listFiles(new File("C:\\Spirefly\\music"));
+        conn = new SQLConnection();
+        songs = new ArrayList<File>();
 
-        manager.createDirectory("C:\\Spirefly\\music");
+        try {
+            conn.connect();
+            conn.createDb();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
-        btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PLAY));
-        btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
+        refreshSongList();
 
         if (!songs.isEmpty()){
-            for (File song : songs) {
-                Label newSong = new Label();
-
-                newSong.getStyleClass().add("songItem");
-
-                Text icon = GlyphsDude.createIcon(FontAwesomeIcon.MUSIC);
-                icon.getStyleClass().add("custom-icon");
-
-                newSong.setGraphic(icon);
-
-                newSong.setOnMouseClicked(mouseEvent -> {
-                    songNumber = songs.indexOf(song);
-                    changeSong(songs.indexOf(song));
-                });
-
-                newSong.setText(" " + song.getName().replace(".mp3", ""));
-
-                newSong.setMaxWidth(Double.MAX_VALUE);
-                vbSongs.getChildren().add(newSong);
-            }
             changeSong(songNumber);
         }
-        else {
-            lbSongTitle.setText("Sem Músicas disponíveis");
-        }
+
+        manager = new FileManager();
+
+        btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PAUSE));
+        btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
 
         slVolume.setValue(50);
 
@@ -163,13 +152,24 @@ public class MainController {
 
     @FXML
     void changeImvCover() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Escolher imagem de capa");
-        File selectedFile = fileChooser.showOpenDialog(new Stage());
-
-        if (selectedFile != null){
-            imvCover.setImage(new Image(selectedFile.toURI().toString()));
+        imvCover.setImage(new Image(manager.choose().toString()));
+    }
+    @FXML
+    void setLoop(){
+        if (!isLooped){
+            imvLoopBt.setImage(new Image(String.valueOf(getClass().getResource("/assets/icons/player_icons/loop_on.png"))));
+        } else {
+            imvLoopBt.setImage(new Image(String.valueOf(getClass().getResource("/assets/icons/player_icons/loop_off.png"))));
         }
+        isLooped = !isLooped;
+    }
+    @FXML
+    void chooseSong(){
+        File file = (File) manager.choose();
+        if (file != null){
+            conn.insertMusic(file.getName(),file.toString(),false);
+        }
+        refreshSongList();
     }
 
     public void changeSong(int index){
@@ -192,8 +192,6 @@ public class MainController {
         slVolume.setValue(50);
 
         slProgress.setMax(media.getDuration().toSeconds());
-
-        Map<String,Object> audioMap = new HashMap<>();
 
         media.getMetadata().addListener(new MapChangeListener<String,Object>(){
             @Override
@@ -237,10 +235,43 @@ public class MainController {
 
     public void autoplay(){
         mediaPlayer.setOnEndOfMedia(() ->{
-            if (songNumber < songs.size()-1){
-                songNumber++;
-            } else songNumber =0;
+            if (!isLooped){
+                if (songNumber < songs.size()-1){
+                    songNumber++;
+                } else songNumber =0;
+            }
             changeSong(songNumber);
         });
+    }
+
+    public void refreshSongList(){
+
+        ArrayList<File> newSongList = conn.updateMusicList(songs);
+
+        if (!songs.isEmpty()){
+            for (File song : newSongList) {
+                Label newSong = new Label();
+
+                newSong.getStyleClass().add("songItem");
+
+                Text icon = GlyphsDude.createIcon(FontAwesomeIcon.MUSIC);
+                icon.getStyleClass().add("custom-icon");
+
+                newSong.setGraphic(icon);
+
+                newSong.setOnMouseClicked(mouseEvent -> {
+                    songNumber = songs.indexOf(song);
+                    changeSong(songs.indexOf(song));
+                });
+
+                newSong.setText(" " + song.getName().replace(".mp3", ""));
+
+                newSong.setMaxWidth(Double.MAX_VALUE);
+                vbSongs.getChildren().add(newSong);
+            }
+        }
+        else {
+            lbSongTitle.setText("Sem Músicas disponíveis");
+        }
     }
 }
