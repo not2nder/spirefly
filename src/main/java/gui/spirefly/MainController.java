@@ -8,7 +8,6 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
@@ -36,15 +35,11 @@ public class MainController {
     @FXML
     private Slider slVolume;
     @FXML
-    private Button btNext;
-    @FXML
     private Button btPlay;
     @FXML
     private Button btMute;
     @FXML
     private ImageView imvCover;
-    @FXML
-    private Button btPrevious;
     @FXML
     private VBox vbSongs;
     @FXML
@@ -54,7 +49,6 @@ public class MainController {
     private Media media;
     private MediaPlayer mediaPlayer;
     private int songNumber;
-    private Map<String, Object> audioMap;
 
     @FXML
     public void initialize() {
@@ -65,8 +59,6 @@ public class MainController {
         manager.createDirectory("C:\\Spirefly\\music");
 
         btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PLAY));
-        btPrevious.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.ARROW_LEFT));
-        btNext.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.ARROW_RIGHT));
         btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
 
         if (!songs.isEmpty()){

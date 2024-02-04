@@ -36,9 +36,23 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1">
                      <children>
-                        <Button fx:id="btPrevious" alignment="CENTER" contentDisplay="CENTER" layoutX="114.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#previous" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia" textAlignment="CENTER" />
+                        <Button fx:id="btPrevious" alignment="CENTER" contentDisplay="CENTER" layoutX="114.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#previous" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia" textAlignment="CENTER">
+                           <graphic>
+                              <ImageView fitHeight="31.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../assets/icons/player_icons/previous.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
                         <Button fx:id="btPlay" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="40.0" styleClass="buttonMedia" textAlignment="CENTER" />
-                        <Button fx:id="btNext" alignment="CENTER" contentDisplay="CENTER" layoutX="166.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#next" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia" />
+                        <Button fx:id="btNext" alignment="CENTER" contentDisplay="CENTER" layoutX="166.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#next" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia">
+                           <graphic>
+                              <ImageView fitHeight="80.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../assets/icons/player_icons/next.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2">
@@ -57,6 +71,17 @@
                      <padding>
                         <Insets left="5.0" />
                      </padding>
+                     <children>
+                        <Button fx:id="btLoop" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" graphicTextGap="0.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="35.0" styleClass="secondaryButton">
+                           <graphic>
+                              <ImageView fitHeight="30.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../assets/icons/player_icons/loop_off.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
                   </HBox>
                </children>
             </GridPane>
