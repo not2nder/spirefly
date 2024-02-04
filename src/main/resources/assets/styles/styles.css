@@ -11,14 +11,16 @@
 
 .button{
     -fx-focus-traversable: false;
-    -fx-background-radius: 50%;
-    -fx-effect: dropshadow(gaussian, #000000, 10, 0, 0, 0);
 }
 
 .buttonMedia{
     -fx-background-radius: 50px;
     -fx-border-radius: 50px;
     -fx-font-size: 17px;
+}
+.secondaryButton{
+    -fx-background-radius: 50%;
+    -fx-effect: dropshadow(gaussian, #000000, 10, 0, 0, 0);
 }
 
 .buttonMedia:hover {
@@ -43,6 +45,7 @@
 
 .songTitle{
     -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #000000, 10, 0, 0, 0);
 }
 
 .background{

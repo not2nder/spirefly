@@ -11,13 +11,18 @@ import javafx.stage.WindowEvent;
 import java.io.IOException;
 
 public class MainApplication extends Application {
-
-    public  Scene mainScene;
+    private static Stage stage;
+    protected static Scene mainScene;
+    private static Object data;
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
-        Scene mainScene = new Scene(fxmlLoader.load(), 600, 400);
+        FXMLLoader mainLoader, configLoader;
+
+        mainLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
+        mainScene = new Scene(mainLoader.load(), 890, 550);
+
+        MainController controller = mainLoader.getController();
 
         stage.setMinWidth(600);
         stage.setMinHeight(400);
@@ -31,6 +36,23 @@ public class MainApplication extends Application {
             public void handle(WindowEvent windowEvent) {
                 Platform.exit();
                 System.exit(0);
+            }
+        });
+
+        mainScene.setOnKeyPressed(event ->{
+            switch (event.getCode()){
+                case UP -> {
+                    controller.next();
+                }
+                case DOWN -> {
+                    controller.previous();
+                }
+                case SPACE -> {
+                    controller.play();
+                }
+                case M -> {
+                    controller.mute();
+                }
             }
         });
     }

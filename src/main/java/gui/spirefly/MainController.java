@@ -7,19 +7,26 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainController {
     @FXML
@@ -35,27 +42,27 @@ public class MainController {
     @FXML
     private Button btMute;
     @FXML
+    private ImageView imvCover;
+    @FXML
     private Button btPrevious;
-
     @FXML
     private VBox vbSongs;
+    @FXML
+    private Label lbImgTitle;
     private ArrayList<File> songs;
     private boolean isPLayin;
     private Media media;
     private MediaPlayer mediaPlayer;
     private int songNumber;
+    private Map<String, Object> audioMap;
 
     @FXML
     public void initialize() {
 
-        File path = new File("C:\\Spirefly\\music");
         FileManager manager = new FileManager();
-        songs = manager.listFiles(path);
+        songs = manager.listFiles(new File("C:\\Spirefly\\music"));
 
-        manager.createDirectory("C:\\Spirefly\\cfg");
-        manager.createDirectory(path.toString());
-//        SQLConnection con = new SQLConnection();
-//        con.connect();
+        manager.createDirectory("C:\\Spirefly\\music");
 
         btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PLAY));
         btPrevious.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.ARROW_LEFT));
@@ -162,14 +169,27 @@ public class MainController {
         }
     }
 
+    @FXML
+    void changeImvCover() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Escolher imagem de capa");
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
+
+        if (selectedFile != null){
+            imvCover.setImage(new Image(selectedFile.toURI().toString()));
+        }
+    }
+
     public void changeSong(int index){
         if (mediaPlayer == null){
             media = new Media(songs.get(index).toURI().toString());
             mediaPlayer = new MediaPlayer(media);
         }
+
         mediaPlayer.stop();
         mediaPlayer.dispose();
         media = new Media(songs.get(index).toURI().toString());
+
         mediaPlayer = new MediaPlayer(media);
 
         mediaPlayer.setOnReady(() -> {
@@ -181,7 +201,34 @@ public class MainController {
 
         slProgress.setMax(media.getDuration().toSeconds());
 
-        lbSongTitle.setText("Now Playing: "+songs.get(songNumber).getName().replace(".mp3",""));
+        Map<String,Object> audioMap = new HashMap<>();
+
+        media.getMetadata().addListener(new MapChangeListener<String,Object>(){
+            @Override
+            public void onChanged(Change<? extends String, ?> ch) {
+                if(ch.wasAdded()){
+
+                    String key=ch.getKey();
+                    Object value=ch.getValueAdded();
+
+                    switch (key){
+                        case "image":
+                            imvCover.setImage((Image) value);
+                            break;
+                        case "artist":
+                            lbImgTitle.setText(value.toString());
+                        case "title":
+                            lbSongTitle.setText(value.toString());
+                            break;
+                    }
+                }
+            }
+        });
+
+        lbSongTitle.setText(songs.get(songNumber).getName().replace(".mp3",""));
+        lbImgTitle.setText(songs.get(songNumber).getName());
+        imvCover.setImage(new Image(String.valueOf(getClass().getResource("/assets/icons/player_covers/default_2.png"))));
+
         mediaPlayer.play();
 
         mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> {
