@@ -16,8 +16,8 @@ Spirefly is an open source audio player made in Java using JavaFX
 - CSS
 
 ## Future Updates:
-- [x] Manipular o player com o teclado
-- [x] Mostrar arte (capa) da faixa
+- [x] Use player with keyboard keys
+- [x] Show music Cover art
 - [ ] PLaylist System
 - [ ] Save songs to any local file/database
 - [ ] Change music speed
