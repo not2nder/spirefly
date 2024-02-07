@@ -1,6 +1,7 @@
 package gui.spirefly;
 
 import connection.SQLConnection;
+import javafx.scene.shape.SVGPath;
 import manager.FileManager;
 
 import de.jensd.fx.glyphs.GlyphsDude;
@@ -72,7 +73,6 @@ public class MainController {
             changeSong(songNumber);
         }
 
-        btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PAUSE));
         btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
 
         slVolume.setValue(50);
@@ -84,6 +84,8 @@ public class MainController {
                 mediaPlayer.setVolume(slVolume.getValue()*0.01);
             }
         });
+
+        System.out.println(songs.toString());
 
         conn.disconnect();
     }
@@ -118,18 +120,22 @@ public class MainController {
 
     @FXML
     public void next() {
-        if (songNumber < songs.size()-1){
-            changeSong(songNumber+1);
-        } else {
-            changeSong(0);
+        if (songs.size() > 1){
+            if (songNumber < songs.size()-1){
+                changeSong(songNumber+1);
+            } else {
+                changeSong(0);
+            }
         }
     }
     @FXML
     public void previous() {
-        if (songNumber > 0 && songNumber <= songs.size()-1){
-            changeSong(songNumber-1);
-        } else {
-            changeSong(songs.size()-1);
+        if (songs.size() < 1){
+            if (songNumber > 0 && songNumber <= songs.size()-1){
+                changeSong(songNumber-1);
+            } else {
+                changeSong(songs.size()-1);
+            }
         }
     }
 
@@ -191,7 +197,7 @@ public class MainController {
 
     public void changeSong(int index){
 
-        if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING && songNumber == index){
+        if (mediaPlayer != null && (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING || mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) && songNumber == index){
             return;
         }
 

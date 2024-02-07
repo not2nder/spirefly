@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="550.0" prefWidth="890.0" style="-fx-background-color: black;" stylesheets="@../../assets/styles/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.spirefly.MainController">
@@ -38,20 +39,18 @@
                      <children>
                         <Button fx:id="btPrevious" alignment="CENTER" contentDisplay="CENTER" layoutX="114.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#previous" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia" textAlignment="CENTER">
                            <graphic>
-                              <ImageView fitHeight="31.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../assets/icons/player_icons/previous.png" />
-                                 </image>
-                              </ImageView>
+                              <SVGPath content="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.575a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z" />
                            </graphic></Button>
-                        <Button fx:id="btPlay" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="40.0" styleClass="buttonMedia" textAlignment="CENTER" />
+                        <Button fx:id="btPlay" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="40.0" styleClass="buttonMedia" textAlignment="CENTER">
+                           <graphic>
+                              <SVGPath content="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z" />
+                           </graphic>
+                           <font>
+                              <Font size="9.0" />
+                           </font></Button>
                         <Button fx:id="btNext" alignment="CENTER" contentDisplay="CENTER" layoutX="166.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#next" prefHeight="30.0" prefWidth="30.0" styleClass="buttonMedia">
                            <graphic>
-                              <ImageView fitHeight="80.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../assets/icons/player_icons/next.png" />
-                                 </image>
-                              </ImageView>
+                              <SVGPath content="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05 1.107A.7.7 0 0 0 1 1.712v12.575a.7.7 0 0 0 1.05.607L12 9.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z" />
                            </graphic></Button>
                      </children>
                   </HBox>
