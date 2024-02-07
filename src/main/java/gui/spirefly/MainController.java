@@ -1,7 +1,7 @@
 package gui.spirefly;
 
 import connection.SQLConnection;
-import filemanager.FileManager;
+import manager.FileManager;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -10,16 +10,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Slider;
+import javafx.scene.Cursor;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.control.Label;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.animation.FadeTransition;
+import javafx.scene.control.Alert.AlertType;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -44,7 +45,7 @@ public class MainController {
     private VBox vbSongs;
     @FXML
     private Label lbImgTitle;
-    private ArrayList<File> songs;
+    private final ArrayList<File> songs = new ArrayList<File>();
     private boolean isPLayin;
     private boolean isLooped = false;
     private Media media;
@@ -54,25 +55,22 @@ public class MainController {
     private FileManager manager;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
 
         conn = new SQLConnection();
-        songs = new ArrayList<File>();
 
-        try {
-            conn.connect();
-            conn.createDb();
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
+        conn.connect();
+        conn.createDb(); //CREATE IF NOT EXISTS
 
         refreshSongList();
 
         if (!songs.isEmpty()){
+
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+
             changeSong(songNumber);
         }
-
-        manager = new FileManager();
 
         btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PAUSE));
         btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
@@ -80,11 +78,14 @@ public class MainController {
         slVolume.setValue(50);
 
         slVolume.valueProperty().addListener(new ChangeListener<Number>() {
+
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                 mediaPlayer.setVolume(slVolume.getValue()*0.01);
             }
         });
+
+        conn.disconnect();
     }
 
     @FXML
@@ -117,45 +118,39 @@ public class MainController {
 
     @FXML
     public void next() {
-        if (mediaPlayer != null) {
-            if (songNumber < songs.size()-1){
-                songNumber++;
-            } else {
-                songNumber = 0;
-            }
-            changeSong(songNumber);
+        if (songNumber < songs.size()-1){
+            changeSong(songNumber+1);
+        } else {
+            changeSong(0);
         }
     }
     @FXML
     public void previous() {
-        if (mediaPlayer != null){
-            if (songNumber > 0 && songNumber <= songs.size()-1){
-                songNumber--;
-            } else {
-                songNumber = songs.size()-1;
-            }
-            changeSong(songNumber);
+        if (songNumber > 0 && songNumber <= songs.size()-1){
+            changeSong(songNumber-1);
+        } else {
+            changeSong(songs.size()-1);
         }
     }
 
     @FXML
     void mute() {
-        if (mediaPlayer != null){
-            mediaPlayer.setMute(!mediaPlayer.isMute());
-            if (mediaPlayer.isMute()){
-                btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_OFF));
-            } else {
-                btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
-            }
+        mediaPlayer.setMute(!mediaPlayer.isMute());
+        if (mediaPlayer.isMute()){
+            btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_OFF));
+        } else {
+            btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
         }
     }
 
     @FXML
     void changeImvCover() {
-        imvCover.setImage(new Image(manager.choose().toString()));
+        manager = new FileManager();
+        imvCover.setImage(new Image(manager.choose().toString())); //change cover image (BETA) - mudar imagem de capa (BETA)
     }
     @FXML
     void setLoop(){
+        // Activates song loop to true value - Ativa o loop de música para true
         if (!isLooped){
             imvLoopBt.setImage(new Image(String.valueOf(getClass().getResource("/assets/icons/player_icons/loop_on.png"))));
         } else {
@@ -164,25 +159,57 @@ public class MainController {
         isLooped = !isLooped;
     }
     @FXML
-    void chooseSong(){
-        File file = (File) manager.choose();
+    void addSong() throws SQLException {
+        conn.connect();
+        manager = new FileManager();
+        File file = (File) manager.choose(); //FileChoose to choose the song - FileChoose para escolher a múscia
         if (file != null){
             conn.insertMusic(file.getName(),file.toString(),false);
         }
-        refreshSongList();
+        Label newSong = new Label(file.getName().substring(0,file.getName().lastIndexOf('.')));
+
+        songs.add(file);
+
+        newSong.setOnMouseClicked(event -> {
+            changeSong(songs.indexOf(file));
+        });
+
+        vbSongs.getChildren().add(newSong);
+    }
+
+    public void deleteSong(File song){
+        try {
+            conn.connect();
+            conn.deleteMusic(String.valueOf(song));
+            vbSongs.getChildren().remove(songs.indexOf(song));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
     }
 
     public void changeSong(int index){
-        if (mediaPlayer == null){
-            media = new Media(songs.get(index).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
+
+        if (mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING && songNumber == index){
+            return;
         }
+
+        songNumber = index;
 
         mediaPlayer.stop();
         mediaPlayer.dispose();
-        media = new Media(songs.get(index).toURI().toString());
 
-        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer = null;
+        media = null;
+        System.gc();
+
+        try{
+            media = new Media(songs.get(index).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         mediaPlayer.setOnReady(() -> {
             slProgress.setMin(0);
@@ -199,21 +226,26 @@ public class MainController {
                 if(ch.wasAdded()){
 
                     String key=ch.getKey();
-                    Object value=ch.getValueAdded();
 
                     switch (key){
                         case "image":
-                            imvCover.setImage((Image) value);
+                            imvCover.setImage((Image) ch.getValueAdded());
                             break;
                         case "artist":
-                            lbImgTitle.setText(value.toString());
+                            lbImgTitle.setText(ch.getValueAdded().toString());
                         case "title":
-                            lbSongTitle.setText(value.toString());
+                            lbSongTitle.setText(ch.getValueAdded().toString());
                             break;
                     }
                 }
             }
         });
+
+        FadeTransition fade = new FadeTransition(Duration.millis(500),lbSongTitle); //set fade to title - Criar um fade para o título
+
+        fade.setFromValue(0);
+        fade.setToValue(1.0);
+        fade.play();
 
         lbSongTitle.setText(songs.get(songNumber).getName().replace(".mp3",""));
         lbImgTitle.setText(songs.get(songNumber).getName());
@@ -225,51 +257,60 @@ public class MainController {
             slProgress.setValue(newValue.toSeconds());
         }));
 
-        autoplay();
-
         btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PAUSE));
         btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
 
         isPLayin = true;
+        autoplay();
     }
 
     public void autoplay(){
         mediaPlayer.setOnEndOfMedia(() ->{
             if (!isLooped){
                 if (songNumber < songs.size()-1){
-                    songNumber++;
-                } else songNumber =0;
+                    changeSong(songNumber+1);
+                } else changeSong(0);
+            } else {
+                mediaPlayer.seek(Duration.millis(0));
             }
-            changeSong(songNumber);
         });
     }
 
-    public void refreshSongList(){
+    public void refreshSongList() throws SQLException {
+
+        conn.connect();
 
         ArrayList<File> newSongList = conn.updateMusicList(songs);
 
+        conn.disconnect();
+
         if (!songs.isEmpty()){
             for (File song : newSongList) {
-                Label newSong = new Label();
+                Label newSong = new Label(song.getName().substring(0,song.getName().lastIndexOf('.')));
 
-                newSong.getStyleClass().add("songItem");
-
-                Text icon = GlyphsDude.createIcon(FontAwesomeIcon.MUSIC);
-                icon.getStyleClass().add("custom-icon");
-
-                newSong.setGraphic(icon);
+                newSong.setCursor(Cursor.HAND);
 
                 newSong.setOnMouseClicked(mouseEvent -> {
-                    songNumber = songs.indexOf(song);
-                    changeSong(songs.indexOf(song));
+                    if (mouseEvent.getButton() == MouseButton.PRIMARY){
+                        changeSong(songs.indexOf(song));
+                    }
+                    else {
+
+                        if (songs.indexOf(song) != songNumber){
+                            Alert alert = new Alert(AlertType.CONFIRMATION, "Delete Selected Song?", ButtonType.YES, ButtonType.CANCEL);
+                            alert.showAndWait();
+
+                            if (alert.getResult() == ButtonType.YES) {
+                                deleteSong(song);
+                            }
+                        }
+                    }
                 });
 
-                newSong.setText(" " + song.getName().replace(".mp3", ""));
-
-                newSong.setMaxWidth(Double.MAX_VALUE);
                 vbSongs.getChildren().add(newSong);
             }
         }
+
         else {
             lbSongTitle.setText("Sem Músicas disponíveis");
         }

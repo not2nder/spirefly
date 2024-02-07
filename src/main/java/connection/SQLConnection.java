@@ -38,14 +38,25 @@ public class SQLConnection
     }
 
     public void insertMusic(String name, String path, boolean isFavorite){
-        String query = "INSERT INTO music (name, path, is_favorite) VALUES (?, ?, ?)";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO music (name, path, is_favorite) VALUES (?, ?, ?)")
+        ) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, path);
             preparedStatement.setBoolean(3, isFavorite);
             preparedStatement.executeUpdate();
 
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteMusic(String path){
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "DELETE FROM music WHERE path = ?"
+        )) {
+            preparedStatement.setString(1, path);
+            preparedStatement.execute();
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -71,5 +82,8 @@ public class SQLConnection
             e.printStackTrace();
         }
         return list;
+    }
+    public void refreshSongs(){
+        
     }
 }

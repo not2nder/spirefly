@@ -11,7 +11,7 @@ import javafx.stage.WindowEvent;
 import java.io.IOException;
 
 public class MainApplication extends Application {
-    protected static Scene mainScene;
+    private Scene mainScene;
 
     @Override
     public void start(Stage stage) throws IOException {

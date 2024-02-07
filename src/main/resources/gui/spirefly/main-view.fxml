@@ -138,7 +138,10 @@
                               <Font size="25.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Click to Change Cover image display" wrapText="true" />
+                              <Tooltip text="Click to Change Cover image display" wrapText="true">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font></Tooltip>
                            </tooltip>
                         </Label>
                      </children>
@@ -159,7 +162,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="236.0">
                <children>
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#chooseSong" prefHeight="30.0" prefWidth="30.0">
+                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#addSong" prefHeight="30.0" prefWidth="30.0">
                      <graphic>
                         <ImageView fitHeight="19.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
