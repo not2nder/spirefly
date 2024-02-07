@@ -67,10 +67,6 @@ Spirefly é um reprodutor de audio de código aberto feito em java usando javafx
 - [ ] Lançar executável `.jar` ou `.exe`
 - [ ] Mudança de tema (Claro)
 
-## Como funciona?
-
-A aplicação cria uma pasta localizada em `C:/ProgramFiles/Spirefly` e as faixas são exibidas ao iniciar
-
 ## Recursos
 
 - Compatível com `.mp3` e outros formatos de audio
