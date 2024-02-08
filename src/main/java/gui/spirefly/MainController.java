@@ -1,14 +1,11 @@
 package gui.spirefly;
 
 import connection.SQLConnection;
-import javafx.scene.shape.SVGPath;
 import manager.FileManager;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
@@ -46,7 +43,7 @@ public class MainController {
     private VBox vbSongs;
     @FXML
     private Label lbImgTitle;
-    private final ArrayList<File> songs = new ArrayList<File>();
+    private final ArrayList<File> songs = new ArrayList<>();
     private boolean isPLayin;
     private boolean isLooped = false;
     private Media media;
@@ -77,15 +74,7 @@ public class MainController {
 
         slVolume.setValue(50);
 
-        slVolume.valueProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                mediaPlayer.setVolume(slVolume.getValue()*0.01);
-            }
-        });
-
-        System.out.println(songs.toString());
+        slVolume.valueProperty().addListener((observableValue, number, t1) -> mediaPlayer.setVolume(slVolume.getValue()*0.01));
 
         conn.disconnect();
     }
@@ -104,9 +93,7 @@ public class MainController {
 
             slProgress.setMax(media.getDuration().toSeconds());
 
-            mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> {
-                slProgress.setValue(newValue.toSeconds());
-            }));
+            mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> slProgress.setValue(newValue.toSeconds())));
 
             autoplay();
         }
@@ -130,7 +117,7 @@ public class MainController {
     }
     @FXML
     public void previous() {
-        if (songs.size() < 1){
+        if (songs.isEmpty()){
             if (songNumber > 0 && songNumber <= songs.size()-1){
                 changeSong(songNumber-1);
             } else {
@@ -176,9 +163,7 @@ public class MainController {
 
         songs.add(file);
 
-        newSong.setOnMouseClicked(event -> {
-            changeSong(songs.indexOf(file));
-        });
+        newSong.setOnMouseClicked(event -> changeSong(songs.indexOf(file)));
 
         vbSongs.getChildren().add(newSong);
     }
@@ -226,23 +211,20 @@ public class MainController {
 
         slProgress.setMax(media.getDuration().toSeconds());
 
-        media.getMetadata().addListener(new MapChangeListener<String,Object>(){
-            @Override
-            public void onChanged(Change<? extends String, ?> ch) {
-                if(ch.wasAdded()){
+        media.getMetadata().addListener((MapChangeListener<String, Object>) ch -> {
+            if(ch.wasAdded()){
 
-                    String key=ch.getKey();
+                String key=ch.getKey();
 
-                    switch (key){
-                        case "image":
-                            imvCover.setImage((Image) ch.getValueAdded());
-                            break;
-                        case "artist":
-                            lbImgTitle.setText(ch.getValueAdded().toString());
-                        case "title":
-                            lbSongTitle.setText(ch.getValueAdded().toString());
-                            break;
-                    }
+                switch (key){
+                    case "image":
+                        imvCover.setImage((Image) ch.getValueAdded());
+                        break;
+                    case "artist":
+                        lbImgTitle.setText(ch.getValueAdded().toString());
+                    case "title":
+                        lbSongTitle.setText(ch.getValueAdded().toString());
+                        break;
                 }
             }
         });
@@ -259,9 +241,7 @@ public class MainController {
 
         mediaPlayer.play();
 
-        mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> {
-            slProgress.setValue(newValue.toSeconds());
-        }));
+        mediaPlayer.currentTimeProperty().addListener(((observableValue, oldValue, newValue) -> slProgress.setValue(newValue.toSeconds())));
 
         btPlay.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.PAUSE));
         btMute.setGraphic(GlyphsDude.createIcon(FontAwesomeIcon.VOLUME_UP));
@@ -292,8 +272,8 @@ public class MainController {
 
         if (!songs.isEmpty()){
             for (File song : newSongList) {
-                Label newSong = new Label(song.getName().substring(0,song.getName().lastIndexOf('.')));
 
+                Label newSong = new Label(song.getName().substring(0,song.getName().lastIndexOf('.')));
                 newSong.setCursor(Cursor.HAND);
 
                 newSong.setOnMouseClicked(mouseEvent -> {

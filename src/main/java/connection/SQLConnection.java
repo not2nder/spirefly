@@ -22,7 +22,6 @@ public class SQLConnection
 
     public void createDb(){
         try{
-            connection = this.connection;
             Statement stmt  = connection.createStatement();
             stmt.executeUpdate("""
                     CREATE TABLE IF NOT EXISTS music(
@@ -65,10 +64,9 @@ public class SQLConnection
     public ArrayList<File> updateMusicList(ArrayList<File> songs){
 
         ArrayList<File> list = new ArrayList<>();
-        String query = "SELECT path FROM music";
         try {
             try (Statement stmt = connection.createStatement();
-                 ResultSet resultSet = stmt.executeQuery(query)){
+                 ResultSet resultSet = stmt.executeQuery("SELECT path FROM music")){
 
                 while (resultSet.next()){
                     File newFile = new File(resultSet.getString("path"));
@@ -82,8 +80,5 @@ public class SQLConnection
             e.printStackTrace();
         }
         return list;
-    }
-    public void refreshSongs(){
-        
     }
 }

@@ -2,23 +2,20 @@ package gui.spirefly;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
 public class MainApplication extends Application {
-    private Scene mainScene;
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader mainLoader, configLoader;
+        FXMLLoader mainLoader;
 
         mainLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
-        mainScene = new Scene(mainLoader.load(), 890, 550);
+        Scene mainScene = new Scene(mainLoader.load(), 890, 550);
 
         MainController controller = mainLoader.getController();
 
@@ -29,28 +26,17 @@ public class MainApplication extends Application {
         stage.setScene(mainScene);
         stage.show();
 
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent windowEvent) {
-                Platform.exit();
-                System.exit(0);
-            }
+        stage.setOnCloseRequest(windowEvent -> {
+            Platform.exit();
+            System.exit(0);
         });
 
         mainScene.setOnKeyPressed(event ->{
             switch (event.getCode()){
-                case UP -> {
-                    controller.next();
-                }
-                case DOWN -> {
-                    controller.previous();
-                }
-                case SPACE -> {
-                    controller.play();
-                }
-                case M -> {
-                    controller.mute();
-                }
+                case UP    -> controller.next();
+                case DOWN  -> controller.previous();
+                case SPACE -> controller.play();
+                case M     -> controller.mute();
             }
         });
     }
